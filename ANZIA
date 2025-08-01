@@ -1,0 +1,107 @@
+# Recreate the ZIP file again for uploading to an external platform (Google Drive if needed)
+
+from zipfile import ZipFile
+import os
+import json
+
+# Define base path
+base_path = "/mnt/data/anzia-bright-academy"
+os.makedirs(f"{base_path}/public", exist_ok=True)
+os.makedirs(f"{base_path}/src", exist_ok=True)
+
+# Create necessary files again
+
+package_json = {
+    "name": "anzia-bright-academy",
+    "version": "1.0.0",
+    "private": True,
+    "dependencies": {
+        "react": "^18.0.0",
+        "react-dom": "^18.0.0",
+        "react-scripts": "5.0.1"
+    },
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject"
+    }
+}
+with open(f"{base_path}/package.json", "w") as f:
+    f.write(json.dumps(package_json, indent=2))
+
+with open(f"{base_path}/public/index.html", "w") as f:
+    f.write("""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="ANZIA Bright Academy Home Tuition Services in Ranchi">
+  <title>ANZIA Bright Academy</title>
+</head>
+<body>
+  <div id="root"></div>
+</body>
+</html>
+""")
+
+with open(f"{base_path}/src/App.jsx", "w") as f:
+    f.write("""
+import React from "react";
+
+export default function App() {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
+      <h1 style={{ color: '#1e3a8a' }}>ANZIA Bright Academy</h1>
+      <p>Home Tuition for Classes 1 to 10 | All Subjects</p>
+
+      <h2 style={{ color: '#2563eb' }}>Subjects Offered:</h2>
+      <ul>
+        <li>Mathematics</li>
+        <li>Science</li>
+        <li>Social Science</li>
+        <li>English</li>
+        <li>Hindi & Other Subjects (on request)</li>
+      </ul>
+
+      <h2 style={{ color: '#2563eb' }}>Location:</h2>
+      <p>Ranchi, Lalpur - 834001</p>
+
+      <h2 style={{ color: '#2563eb' }}>Contact for Home Tuition</h2>
+      <p>📞 Call: <a href="tel:+917562812885">+91 7562812885</a></p>
+      <p>💬 WhatsApp: <a href="https://wa.me/917562812885">Chat on WhatsApp</a></p>
+
+      <h2 style={{ color: '#2563eb' }}>Request a Tuition</h2>
+      <iframe
+        src="https://docs.google.com/forms/d/e/1FAIpQLSd9D-ExampleFormLink/viewform?embedded=true"
+        width="100%"
+        height="600"
+        frameBorder="0"
+        marginHeight="0"
+        marginWidth="0"
+        title="Tuition Request Form"
+      >Loading…</iframe>
+    </div>
+  );
+}
+""")
+
+with open(f"{base_path}/src/index.js", "w") as f:
+    f.write("""import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+""")
+
+# Create zip
+zip_path = "/mnt/data/ANZIA-bright-academy.zip"
+with ZipFile(zip_path, 'w') as zipf:
+    for foldername, subfolders, filenames in os.walk(base_path):
+        for filename in filenames:
+            filepath = os.path.join(foldername, filename)
+            arcname = os.path.relpath(filepath, base_path)
+            zipf.write(filepath, arcname)
+
+zip_path
